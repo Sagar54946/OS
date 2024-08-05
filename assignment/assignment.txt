@@ -1,0 +1,105 @@
+LAB ASSIGNMENT
+(PAS078BEI032)
+
+Question: Describe and discuss the use case of following:
+
+1. fork(): 
+   The `fork()` system call is used to create a new process by duplicating the calling process. The newly created process is called the child process, while the original process is the parent process. After the fork, both the parent and child processes execute the code following the `fork()` call, each with its own separate memory space. This is commonly used to perform tasks in parallel or to run a different piece of code in the child process.
+
+2. exec():
+   The `exec()` function replaces the current process with a new program. When this function is called, the current process's code and data are replaced with the code and data of the new program, effectively making it a completely new process. This is often used after `fork()` when the child process needs to run a different program than the parent.
+
+3. getpid():
+   The `getpid()` function returns the process ID (PID) of the calling process. This is useful for obtaining the unique identifier of a process, which can then be used for various purposes, such as sending signals or logging.
+
+4. wait():
+   The `wait()` function is used by a parent process to pause its execution until one of its child processes has finished. This is important for synchronizing processes, as it allows the parent to wait for the completion of tasks started in the child processes before continuing.
+
+5. stat():
+   The `stat()` function retrieves information about a specific file or directory, such as its size, permissions, and timestamps. This data is stored in a structure for further analysis or decision-making. It's commonly used in file management tasks where detailed information about files is required.
+
+6. opendir():
+   The `opendir()` function opens a directory stream, allowing you to read the contents of the directory. It's the first step in iterating through directory entries, typically followed by calls to functions like `readdir()` to read individual entries. This is useful in file system navigation and management.
+
+7. readdir():
+   The `readdir()` function reads entries from a directory stream opened by `opendir()`. It returns information about each file or subdirectory, allowing you to process directory contents one entry at a time. This is particularly useful in file browsing and management utilities.
+
+8. close():
+   The `close()` function closes an open file descriptor, which is a reference to an open file, socket, or other I/O resource. Closing the file descriptor releases the associated resources, ensuring they are properly freed up for other processes or tasks. This is crucial for managing system resources efficiently.
+
+
+
+// C program for producer consumer problem
+
+#include <stdio.h>
+#include <stdlib.h>
+
+// Initialize a mutex to 1
+int mutex = 1;
+
+// Number of full slots is 0
+int full = 0;
+
+// Number of empty slots as size of the buffer
+int empty = 10;
+int x = 0;
+
+// Function to produce an item and add it to the buffer
+void producer() {
+    --mutex;
+    ++full;
+    --empty;
+    x++;
+    printf("\nProducer produces item %d\n", x);
+    ++mutex;
+}
+
+// Function to consume an item and remove it from the buffer
+void consumer() {
+    --mutex;
+    --full;
+    ++empty;
+    printf("\nConsumer consumes item %d\n", x);
+    x--;
+    ++mutex;
+}
+
+int main() {
+    int n;
+    while (1) {
+        printf("\n1. Press 1 for Producer");
+        printf("\n2. Press 2 for Consumer");
+        printf("\n3. Press 3 for Exit");
+        printf("\nEnter your choice: ");
+        scanf("%d", &n);
+
+        // Switch cases for user input
+        switch(n) {
+            case 1:
+                if ((mutex == 1) && (empty != 0)) {
+                    producer();
+                } else {
+                    printf("Buffer is full!\n");
+                }
+                break;
+    
+            case 2:
+                if ((mutex == 1) && (full != 0)) {
+                    consumer();
+                } else {
+                    printf("Buffer is empty!\n");
+                }
+                break;
+
+            case 3:
+                exit(0);
+                break;
+
+            default:
+                printf("Invalid choice! Please try again.\n");
+                break;
+        }
+    }
+
+    return 0;
+}
